@@ -23,6 +23,9 @@
         <activity
             android:name=".ui.TaskView">
         </activity>
+        <activity
+            android:name=".ui.CreateTask">
+        </activity>
     </application>
 
 </manifest>

@@ -1,6 +1,19 @@
-package com.srikant.taskit.util;
+package com.srikant.taskit.ui;
 
+import android.app.AppComponentFactory;
+import android.os.Bundle;
 import android.os.StrictMode;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.TextView;
+
+import androidx.appcompat.app.AppCompatActivity;
+
+import com.srikant.taskit.R;
+import com.srikant.taskit.util.SessionData;
+
+import org.w3c.dom.Text;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
@@ -12,45 +25,49 @@ import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
-import java.util.ArrayList;
 import java.util.HashMap;
 
-public class SessionData {
-    static String token;
-    static String name;
-    static ArrayList<Task> tasks = new ArrayList<>();
+public class CreateTask extends AppCompatActivity {
 
-    public static void setName(String n) {
-        name = n;
+    int day;
+    int month;
+    int year;
+    EditText name;
+    EditText description;
+
+
+    public void onCreate(Bundle savedInstance) {
+        super.onCreate(savedInstance);
+        setContentView(R.layout.create_task);
+
+        Button createTask = findViewById(R.id.submit);
+        Button changeDate = findViewById(R.id.pickDate);
+        TextView date = findViewById(R.id.date);
+        description = findViewById(R.id.description);
+        name = findViewById(R.id.name);
+
+        Bundle extras = getIntent().getExtras();
+        day = extras.getInt("day");
+        month = extras.getInt("month");
+        year = extras.getInt("year");
+
+        createTask.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                createTask();
+            }
+        });
     }
-    public static void setToken(String t) {
-        token = t;
-    }
 
-    public static String getToken() {
-        return token;
-    }
-
-    class Task {
-        String name;
-        int day;
-        int month;
-        int year;
-        String description;
-
-        Task(String name, String description, int day, int month, int year) {
-            this.name = name;
-            this.day = day;
-            this.month = month;
-            this.year = year;
-            this.description = description;
-        }
-    }
-
-    public static void getTasks() {
+    public void createTask() {
         enableStrictMode();
         HashMap<String, String> params = new HashMap<>();
-        params.put("token", token);
+        params.put("token", SessionData.getToken());
+        params.put("taskName", name.getText().toString());
+        params.put("day", Integer.toString(this.day));
+        params.put("month", Integer.toString(this.month));
+        params.put("year", Integer.toString(this.year));
+        params.put("description", description.getText().toString());
         StringBuilder sbParams = new StringBuilder();
         int i = 0;
         for (String key : params.keySet()) {
@@ -67,7 +84,7 @@ public class SessionData {
             i++;
         }
         try{
-            String url = "http://www.srikantv.com/taskitAPI/getTasks";
+            String url = "http://www.srikantv.com/taskitAPI/newTask";
             URL urlObj = new URL(url);
             HttpURLConnection conn = (HttpURLConnection) urlObj.openConnection();
 
@@ -108,11 +125,10 @@ public class SessionData {
         }
     }
 
-    public static void enableStrictMode()
+    public void enableStrictMode()
     {
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
 
         StrictMode.setThreadPolicy(policy);
     }
-
 }
