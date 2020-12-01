@@ -1,6 +1,14 @@
 package com.srikant.taskit.util;
 
+import android.os.Build;
 import android.os.StrictMode;
+import android.util.Log;
+
+import androidx.annotation.RequiresApi;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
@@ -18,7 +26,7 @@ import java.util.HashMap;
 public class SessionData {
     static String token;
     static String name;
-    static ArrayList<Task> tasks = new ArrayList<>();
+    static ArrayList<Task> tasks;
 
     public static void setName(String n) {
         name = n;
@@ -47,7 +55,8 @@ public class SessionData {
         }
     }
 
-    public static void getTasks() {
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
+    public void getTasks() {
         enableStrictMode();
         HashMap<String, String> params = new HashMap<>();
         params.put("token", token);
@@ -86,6 +95,8 @@ public class SessionData {
             wr.close();
 
             try {
+                tasks = new ArrayList<>();
+
                 InputStream in = new BufferedInputStream(conn.getInputStream());
                 BufferedReader reader = new BufferedReader(new InputStreamReader(in));
                 StringBuilder result = new StringBuilder();
@@ -95,8 +106,23 @@ public class SessionData {
                 }
 
                 String resultStr = result.toString();
+                JSONObject obj = new JSONObject(resultStr);
+                JSONArray arr = new JSONArray(obj.getJSONArray("tasks"));
+
+                for(int j = 0; j < arr.length(); j++) {
+                    JSONObject object = arr.getJSONObject(j);
+                    String taskName = object.getString("taskName");
+                    int day = Integer.parseInt(object.getString("day"));
+                    int month = Integer.parseInt(object.getString("month"));
+                    int year = Integer.parseInt(object.getString("year"));
+                    String description = object.getString("description");
+                    Task temp = new Task(taskName, description, day, month, year);
+                    tasks.add(temp);
+                }
 
             } catch (IOException e) {
+                e.printStackTrace();
+            } catch (JSONException e) {
                 e.printStackTrace();
             } finally {
                 if (conn != null) {
