@@ -1,6 +1,7 @@
 package com.srikant.taskit.ui;
 
 import android.app.AppComponentFactory;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.StrictMode;
 import android.view.View;
@@ -8,6 +9,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.srikant.taskit.R;
@@ -52,6 +54,7 @@ public class CreateTask extends AppCompatActivity {
         year = extras.getInt("year");
 
         createTask.setOnClickListener(new View.OnClickListener() {
+            @RequiresApi(api = Build.VERSION_CODES.KITKAT)
             @Override
             public void onClick(View view) {
                 createTask();
@@ -59,6 +62,7 @@ public class CreateTask extends AppCompatActivity {
         });
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     public void createTask() {
         enableStrictMode();
         HashMap<String, String> params = new HashMap<>();
@@ -111,7 +115,7 @@ public class CreateTask extends AppCompatActivity {
                     result.append(line);
                 }
 
-                String resultStr = result.toString();
+                SessionData.getTasks();
 
             } catch (IOException e) {
                 e.printStackTrace();

@@ -39,24 +39,54 @@ public class SessionData {
         return token;
     }
 
-    class Task {
+    public static ArrayList<Task> getForDMY(int day, int month, int year) {
+        ArrayList<Task> returnList = new ArrayList<Task>();
+        for(int i = 0; i < tasks.size(); i++) {
+            Task temp = tasks.get(i);
+            if(temp.getDay() == day && temp.getMonth() == month && temp.getYear() == year) {
+                returnList.add(temp);
+            }
+        }
+        return returnList;
+    }
+
+
+
+    public static class Task {
         String name;
         int day;
         int month;
         int year;
         String description;
 
-        Task(String name, String description, int day, int month, int year) {
+        public Task(String name, String description, int day, int month, int year) {
             this.name = name;
             this.day = day;
             this.month = month;
             this.year = year;
             this.description = description;
         }
+
+        public int getDay() {
+            return day;
+        }
+        public int getMonth() {
+            return month;
+        }
+        public int getYear() {
+            return year;
+        }
+        public String getTaskName() {
+            return name;
+        }
+        public String getTaskDescription() {
+            return description;
+        }
+
     }
 
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
-    public void getTasks() {
+    public static void getTasks() {
         enableStrictMode();
         HashMap<String, String> params = new HashMap<>();
         params.put("token", token);
@@ -107,7 +137,7 @@ public class SessionData {
 
                 String resultStr = result.toString();
                 JSONObject obj = new JSONObject(resultStr);
-                JSONArray arr = new JSONArray(obj.getJSONArray("tasks"));
+                JSONArray arr = obj.getJSONArray("tasks");
 
                 for(int j = 0; j < arr.length(); j++) {
                     JSONObject object = arr.getJSONObject(j);
@@ -117,6 +147,7 @@ public class SessionData {
                     int year = Integer.parseInt(object.getString("year"));
                     String description = object.getString("description");
                     Task temp = new Task(taskName, description, day, month, year);
+                    Log.d("asdf", taskName);
                     tasks.add(temp);
                 }
 

@@ -2,12 +2,15 @@ package com.srikant.taskit.ui;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.StrictMode;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ListView;
 
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.srikant.taskit.R;
@@ -23,6 +26,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 public class TaskView extends AppCompatActivity {
@@ -32,9 +36,13 @@ public class TaskView extends AppCompatActivity {
 
 
 
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.task_display);
+        SessionData.getTasks();
+
+        // Construct the data source
 
         Button addTask = findViewById(R.id.addTask);
 
@@ -42,6 +50,13 @@ public class TaskView extends AppCompatActivity {
         day = extras.getInt("day");
         month = extras.getInt("month");
         year = extras.getInt("year");
+        ArrayList<SessionData.Task> viewTasks = new ArrayList<>();
+        viewTasks = SessionData.getForDMY(day, month, year);
+
+        ListAdapter adapter = new ListAdapter(this, 0, viewTasks);
+
+        ListView listView = (ListView) findViewById(R.id.listView);
+        listView.setAdapter(adapter);
 
         addTask.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -53,7 +68,6 @@ public class TaskView extends AppCompatActivity {
     }
 
     public void changeActivity(int day, int month, int year) {
-        Log.d("sdfsd", "sdf");
         Intent intent = new Intent(this, CreateTask.class);
         intent.putExtra("day", day);
         intent.putExtra("month", month);
