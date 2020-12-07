@@ -12,6 +12,7 @@ import android.widget.Toast;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.navigation.NavigationView;
+import com.google.android.material.textfield.TextInputLayout;
 import com.srikant.taskit.util.SessionData;
 
 import androidx.navigation.NavController;
@@ -50,13 +51,13 @@ public class MainActivity extends AppCompatActivity {
         if(!logged) {
             setContentView(R.layout.login_page);
             Button login = findViewById(R.id.login);
-            final EditText username = findViewById(R.id.username);
-            final EditText password = findViewById(R.id.password);
+            final TextInputLayout username = findViewById(R.id.username);
+            final TextInputLayout password = findViewById(R.id.password);
             login.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    if(!username.getText().toString().equals("") && !password.getText().toString().equals("")) {
-                        String response = login(username.getText().toString(), password.getText().toString());
+                    if(!username.getEditText().getText().toString().equals("") && !password.getEditText().getText().toString().equals("")) {
+                        String response = login(username.getEditText().getText().toString(), password.getEditText().getText().toString());
                         if(response != null) {
                             try {
                                 JSONObject obj = new JSONObject(response);

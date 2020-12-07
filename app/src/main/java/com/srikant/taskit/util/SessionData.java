@@ -41,10 +41,12 @@ public class SessionData {
 
     public static ArrayList<Task> getForDMY(int day, int month, int year) {
         ArrayList<Task> returnList = new ArrayList<Task>();
-        for(int i = 0; i < tasks.size(); i++) {
-            Task temp = tasks.get(i);
-            if(temp.getDay() == day && temp.getMonth() == month && temp.getYear() == year) {
-                returnList.add(temp);
+        if(tasks != null) {
+            for (int i = 0; i < tasks.size(); i++) {
+                Task temp = tasks.get(i);
+                if (temp.getDay() == day && temp.getMonth() == month && temp.getYear() == year) {
+                    returnList.add(temp);
+                }
             }
         }
         return returnList;
