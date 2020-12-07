@@ -12,6 +12,7 @@ import android.widget.TextView;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.google.android.material.textfield.TextInputLayout;
 import com.srikant.taskit.R;
 import com.srikant.taskit.util.SessionData;
 
@@ -34,8 +35,8 @@ public class CreateTask extends AppCompatActivity {
     int day;
     int month;
     int year;
-    EditText name;
-    EditText description;
+    TextInputLayout name;
+    TextInputLayout description;
 
 
     public void onCreate(Bundle savedInstance) {
@@ -67,11 +68,11 @@ public class CreateTask extends AppCompatActivity {
         enableStrictMode();
         HashMap<String, String> params = new HashMap<>();
         params.put("token", SessionData.getToken());
-        params.put("taskName", name.getText().toString());
+        params.put("taskName", name.getEditText().getText().toString());
         params.put("day", Integer.toString(this.day));
         params.put("month", Integer.toString(this.month));
         params.put("year", Integer.toString(this.year));
-        params.put("description", description.getText().toString());
+        params.put("description", description.getEditText().getText().toString());
         StringBuilder sbParams = new StringBuilder();
         int i = 0;
         for (String key : params.keySet()) {
