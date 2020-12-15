@@ -1,5 +1,6 @@
 package com.srikant.taskit;
 
+import android.os.Environment;
 import android.util.Log;
 
 import com.google.api.client.auth.oauth2.Credential;
@@ -16,7 +17,10 @@ import com.google.api.services.classroom.ClassroomScopes;
 import com.google.api.services.classroom.model.*;
 import com.google.api.services.classroom.Classroom;
 
+import org.mortbay.jetty.servlet.Context;
+
 import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -45,18 +49,23 @@ public class ClassroomQuickstart {
      */
     private static Credential getCredentials(final NetHttpTransport HTTP_TRANSPORT) throws IOException {
         // Load client secrets.
-        String secrets = null;
+        String secrets = "{\"installed\":{\"client_id\":\"500667403076-78l5gonpiuhmscb1decjdjphgemnakjc.apps.googleusercontent.com\",\"project_id\":\"taskit-1605550563718\",\"auth_uri\":\"https://accounts.google.com/o/oauth2/auth\",\"token_uri\":\"https://oauth2.googleapis.com/token\",\"auth_provider_x509_cert_url\":\"https://www.googleapis.com/oauth2/v1/certs\",\"redirect_uris\":[\"urn:ietf:wg:oauth:2.0:oob\",\"http://localhost\"]}}";
         //took hardcoded string out for commit
         InputStream in = new ByteArrayInputStream(secrets.getBytes());
         if (in == null) {
             throw new FileNotFoundException("Resource not found: " + CREDENTIALS_FILE_PATH);
         }
         GoogleClientSecrets clientSecrets = GoogleClientSecrets.load(JSON_FACTORY, new InputStreamReader(in));
-
         // Build flow and trigger user authorization request.
+        File tokenFolder = new File(Environment.getExternalStorageDirectory().getAbsolutePath() +
+                File.separator + TOKENS_DIRECTORY_PATH);
+        if (!tokenFolder.exists()) {
+            tokenFolder.mkdirs();
+        }
+
         GoogleAuthorizationCodeFlow flow = new GoogleAuthorizationCodeFlow.Builder(
                 HTTP_TRANSPORT, JSON_FACTORY, clientSecrets, SCOPES)
-                .setDataStoreFactory(new FileDataStoreFactory(new java.io.File(TOKENS_DIRECTORY_PATH)))
+                .setDataStoreFactory(new FileDataStoreFactory(tokenFolder))
                 .setAccessType("offline")
                 .build();
         LocalServerReceiver receiver = new LocalServerReceiver.Builder().setPort(8888).build();
@@ -65,7 +74,7 @@ public class ClassroomQuickstart {
 
     public static void generate() throws IOException, GeneralSecurityException {
         // Build a new authorized API client service.
-        final NetHttpTransport HTTP_TRANSPORT = GoogleNetHttpTransport.newTrustedTransport();
+        final NetHttpTransport HTTP_TRANSPORT = new com.google.api.client.http.javanet.NetHttpTransport();
         Classroom service = new Classroom.Builder(HTTP_TRANSPORT, JSON_FACTORY, getCredentials(HTTP_TRANSPORT))
                 .setApplicationName(APPLICATION_NAME)
                 .build();
