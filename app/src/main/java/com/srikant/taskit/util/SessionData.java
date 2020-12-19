@@ -27,6 +27,7 @@ public class SessionData {
     static String token;
     static String name;
     static ArrayList<Task> tasks;
+    static ArrayList<String> canvasTokens;
 
     public static void setName(String n) {
         name = n;
@@ -165,6 +166,10 @@ public class SessionData {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public static void getCanvasTokens() {
+
     }
 
     public static void enableStrictMode()
