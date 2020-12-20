@@ -1,5 +1,6 @@
 package com.srikant.taskit.util;
 
+import android.graphics.Canvas;
 import android.os.Build;
 import android.os.StrictMode;
 import android.util.Log;
@@ -27,7 +28,7 @@ public class SessionData {
     static String token;
     static String name;
     static ArrayList<Task> tasks;
-    static ArrayList<String> canvasTokens;
+    static ArrayList<Canvas> canvasTokens;
 
     public static void setName(String n) {
         name = n;
@@ -38,6 +39,10 @@ public class SessionData {
 
     public static String getToken() {
         return token;
+    }
+
+    public static ArrayList<Canvas> getAllCanvas() {
+        return canvasTokens;
     }
 
     public static ArrayList<Task> getForDMY(int day, int month, int year) {
@@ -53,6 +58,23 @@ public class SessionData {
         return returnList;
     }
 
+    public static class Canvas {
+        String name;
+        String token;
+
+        public Canvas(String name, String token) {
+            this.name = name;
+            this.token = token;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public String getToken() {
+            return token;
+        }
+    }
 
 
     public static class Task {
@@ -141,7 +163,6 @@ public class SessionData {
                 String resultStr = result.toString();
                 JSONObject obj = new JSONObject(resultStr);
                 JSONArray arr = obj.getJSONArray("tasks");
-
                 for(int j = 0; j < arr.length(); j++) {
                     JSONObject object = arr.getJSONObject(j);
                     String taskName = object.getString("taskName");
@@ -169,7 +190,82 @@ public class SessionData {
     }
 
     public static void getCanvasTokens() {
+        enableStrictMode();
+        HashMap<String, String> params = new HashMap<>();
+        params.put("token", token);
+        StringBuilder sbParams = new StringBuilder();
+        int i = 0;
+        for (String key : params.keySet()) {
+            try {
+                if (i != 0){
+                    sbParams.append("&");
+                }
+                sbParams.append(key).append("=")
+                        .append(URLEncoder.encode(params.get(key), "UTF-8"));
 
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+            }
+            i++;
+        }
+        try{
+            String url = "http://www.srikantv.com/taskitAPI/getCanvasTokens";
+            URL urlObj = new URL(url);
+            HttpURLConnection conn = (HttpURLConnection) urlObj.openConnection();
+
+            conn.setDoOutput(true);
+            conn.setRequestMethod("POST");
+            conn.setRequestProperty("Accept-Charset", "UTF-8");
+            conn.setReadTimeout(10000);
+            conn.setConnectTimeout(15000);
+            conn.connect();
+
+            String paramsString = sbParams.toString();
+
+            DataOutputStream wr = new DataOutputStream(conn.getOutputStream());
+            wr.writeBytes(paramsString);
+            wr.flush();
+            wr.close();
+
+            try {
+                canvasTokens = new ArrayList<>();
+
+                InputStream in = new BufferedInputStream(conn.getInputStream());
+                BufferedReader reader = new BufferedReader(new InputStreamReader(in));
+                StringBuilder result = new StringBuilder();
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    result.append(line);
+                }
+
+                String resultStr = result.toString();
+                JSONObject obj = new JSONObject(resultStr);
+                JSONArray arr = obj.getJSONArray("tokens");
+
+
+                if(obj.getString("status").equals("1")) {
+                    for (int j = 0; j < arr.length(); j++) {
+                        JSONObject object = arr.getJSONObject(j);
+                        String name = object.getString("name");
+                        String token = object.getString("token");
+                        Log.d(name, token);
+                        Canvas canvas = new Canvas(name, token);
+                        canvasTokens.add(canvas);
+                    }
+                }
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            } catch (JSONException e) {
+                e.printStackTrace();
+            } finally {
+                if (conn != null) {
+                    conn.disconnect();
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public static void enableStrictMode()

@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.Button;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -16,6 +17,11 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 
 import com.srikant.taskit.R;
+import com.srikant.taskit.ui.CanvasListAdapter;
+import com.srikant.taskit.ui.DueTodayAdapter;
+import com.srikant.taskit.util.SessionData;
+
+import java.util.ArrayList;
 
 public class GalleryFragment extends Fragment {
 
@@ -27,6 +33,8 @@ public class GalleryFragment extends Fragment {
                 ViewModelProviders.of(this).get(GalleryViewModel.class);
         View root = inflater.inflate(R.layout.fragment_gallery, container, false);
         final Button create = root.findViewById(R.id.newCanvas);
+        ListView listView = root.findViewById(R.id.listView);
+        SessionData.getCanvasTokens();
 
         create.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -48,6 +56,10 @@ public class GalleryFragment extends Fragment {
                 dialog.show();
             }
         });
+
+        CanvasListAdapter adapter = new CanvasListAdapter(getContext(), 0, SessionData.getAllCanvas());
+
+        listView.setAdapter(adapter);
 
         return root;
     }

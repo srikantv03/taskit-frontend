@@ -8,6 +8,7 @@
     tools:context=".ui.gallery.GalleryFragment">
 
     <ListView
+        android:id="@+id/listView"
         android:layout_width="338dp"
         android:layout_height="352dp"
         app:layout_constraintBottom_toBottomOf="parent"
