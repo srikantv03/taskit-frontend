@@ -15,3 +15,6 @@ TaskIt's backend is centered around a hosted MySQL database and a set of APIs fo
 This scalability also allows me to extend this application past an android application and into a web-application (work in progress) quickly and easily, with the only hurdle being the creation of a new user interface.
 
 ### Intuitiveness
+
+
+Developed by Srikant Vasudevan

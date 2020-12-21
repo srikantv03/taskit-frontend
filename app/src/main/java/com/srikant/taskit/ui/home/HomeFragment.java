@@ -36,7 +36,7 @@ public class HomeFragment extends Fragment {
 
     private HomeViewModel homeViewModel;
 
-
+    //js
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         homeViewModel = ViewModelProviders.of(this).get(HomeViewModel.class);
