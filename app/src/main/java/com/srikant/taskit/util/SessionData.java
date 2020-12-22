@@ -198,38 +198,39 @@ public class SessionData {
 
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     public static void fromCanvasToTask() {
-        for(Canvas canvas : canvasTokens) {
-            String token = canvas.getToken();
-            String domain = canvas.getDomain();
-            try{
-                String url = "http://www.srikantv.com/taskitAPI/getCanvasTasks?apiToken=" + token + "&domain=" + domain;
-                URL urlObj = new URL(url);
-                HttpURLConnection conn = (HttpURLConnection) urlObj.openConnection();
-
-                conn.setDoOutput(true);
-                conn.setRequestMethod("POST");
-                conn.setRequestProperty("Accept-Charset", "UTF-8");
-                conn.setReadTimeout(10000);
-                conn.setConnectTimeout(15000);
-                conn.connect();
-
+        if(canvasTokens != null) {
+            for (Canvas canvas : canvasTokens) {
+                String token = canvas.getToken();
+                String domain = canvas.getDomain();
                 try {
-                    canvasTokens = new ArrayList<>();
+                    String url = "http://www.srikantv.com/taskitAPI/getCanvasTasks?apiToken=" + token + "&domain=" + domain;
+                    URL urlObj = new URL(url);
+                    HttpURLConnection conn = (HttpURLConnection) urlObj.openConnection();
 
-                    InputStream in = new BufferedInputStream(conn.getInputStream());
-                    BufferedReader reader = new BufferedReader(new InputStreamReader(in));
-                    StringBuilder result = new StringBuilder();
-                    String line;
-                    while ((line = reader.readLine()) != null) {
-                        result.append(line);
-                    }
+                    conn.setDoOutput(true);
+                    conn.setRequestMethod("POST");
+                    conn.setRequestProperty("Accept-Charset", "UTF-8");
+                    conn.setReadTimeout(10000);
+                    conn.setConnectTimeout(15000);
+                    conn.connect();
 
-                    String resultStr = result.toString();
-                    JSONObject obj = new JSONObject(resultStr);
-                    JSONArray arr =obj.getJSONArray("ids");
+                    try {
+                        canvasTokens = new ArrayList<>();
+
+                        InputStream in = new BufferedInputStream(conn.getInputStream());
+                        BufferedReader reader = new BufferedReader(new InputStreamReader(in));
+                        StringBuilder result = new StringBuilder();
+                        String line;
+                        while ((line = reader.readLine()) != null) {
+                            result.append(line);
+                        }
+
+                        String resultStr = result.toString();
+                        JSONObject obj = new JSONObject(resultStr);
+                        JSONArray arr = obj.getJSONArray("ids");
 
 
-                    for (int j = 0; j < arr.length(); j++) {
+                        for (int j = 0; j < arr.length(); j++) {
                             JSONObject object = arr.getJSONObject(j);
 
                             String name = object.getString("name");
@@ -239,21 +240,22 @@ public class SessionData {
                             int year = Integer.parseInt(object.getString("year"));
 
                             createTaskFromCanvas(name, description, day, month, year);
-                    }
+                        }
 
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    } finally {
+                        if (conn != null) {
+                            conn.disconnect();
+                        }
+                    }
                 } catch (IOException e) {
                     e.printStackTrace();
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                } finally {
-                    if (conn != null) {
-                        conn.disconnect();
-                    }
                 }
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
 
+            }
         }
 
 
@@ -322,6 +324,7 @@ public class SessionData {
                         String b = object.getString("beforeCreate");
                         String a = object.getString("afterCreate");
                         Canvas canvas = new Canvas(name, token, domain, b, a);
+                        Log.d("Status", "a canvas is being made");
                         canvasTokens.add(canvas);
                     }
                 }
@@ -354,7 +357,7 @@ public class SessionData {
         params.put("token", token);
         params.put("taskName", name);
         params.put("day", Integer.toString(day));
-        params.put("month", Integer.toString(month));
+        params.put("month", Integer.toString(month - 1));
         params.put("year", Integer.toString(year));
         params.put("description", description);
         StringBuilder sbParams = new StringBuilder();
@@ -413,5 +416,6 @@ public class SessionData {
             e.printStackTrace();
         }
     }
+
 
 }

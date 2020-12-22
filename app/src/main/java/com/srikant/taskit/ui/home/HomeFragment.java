@@ -61,6 +61,7 @@ public class HomeFragment extends Fragment {
         int day = cal.get(Calendar.DAY_OF_MONTH);
 
         SessionData.getTasks();
+        SessionData.fromCanvasToTask();
 
         ArrayList<SessionData.Task> viewTasks = SessionData.getForDMY(day, month, year);
         DueTodayAdapter adapter = new DueTodayAdapter(getContext(), 0, viewTasks);

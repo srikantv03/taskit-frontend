@@ -1,6 +1,7 @@
 package com.srikant.taskit.ui.gallery;
 
 import android.app.Dialog;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,6 +13,7 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
@@ -27,6 +29,7 @@ public class GalleryFragment extends Fragment {
 
     private GalleryViewModel galleryViewModel;
 
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
         galleryViewModel =
@@ -35,7 +38,7 @@ public class GalleryFragment extends Fragment {
         final Button create = root.findViewById(R.id.newCanvas);
         ListView listView = root.findViewById(R.id.listView);
         SessionData.getCanvasTokens();
-        SessionData.fromCanvasToTask();
+
 
         create.setOnClickListener(new View.OnClickListener() {
             @Override
