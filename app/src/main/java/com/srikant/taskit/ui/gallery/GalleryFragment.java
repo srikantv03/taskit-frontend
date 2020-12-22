@@ -35,6 +35,7 @@ public class GalleryFragment extends Fragment {
         final Button create = root.findViewById(R.id.newCanvas);
         ListView listView = root.findViewById(R.id.listView);
         SessionData.getCanvasTokens();
+        SessionData.fromCanvasToTask();
 
         create.setOnClickListener(new View.OnClickListener() {
             @Override

@@ -60,20 +60,27 @@ public class SessionData {
 
     public static class Canvas {
         String name;
+        String domain;
         String token;
+        String beforeSetting;
+        String afterSetting;
 
-        public Canvas(String name, String token) {
+        public Canvas(String name, String token, String domain, String b, String a) {
             this.name = name;
             this.token = token;
+            this.domain = domain;
+
+            this.beforeSetting = b;
+            this.afterSetting = a;
         }
 
         public String getName() {
             return name;
         }
-
         public String getToken() {
             return token;
         }
+        public String getDomain() {return domain;}
     }
 
 
@@ -189,6 +196,69 @@ public class SessionData {
         }
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
+    public static void fromCanvasToTask() {
+        for(Canvas canvas : canvasTokens) {
+            String token = canvas.getToken();
+            String domain = canvas.getDomain();
+            try{
+                String url = "http://www.srikantv.com/taskitAPI/getCanvasTasks?apiToken=" + token + "&domain=" + domain;
+                URL urlObj = new URL(url);
+                HttpURLConnection conn = (HttpURLConnection) urlObj.openConnection();
+
+                conn.setDoOutput(true);
+                conn.setRequestMethod("POST");
+                conn.setRequestProperty("Accept-Charset", "UTF-8");
+                conn.setReadTimeout(10000);
+                conn.setConnectTimeout(15000);
+                conn.connect();
+
+                try {
+                    canvasTokens = new ArrayList<>();
+
+                    InputStream in = new BufferedInputStream(conn.getInputStream());
+                    BufferedReader reader = new BufferedReader(new InputStreamReader(in));
+                    StringBuilder result = new StringBuilder();
+                    String line;
+                    while ((line = reader.readLine()) != null) {
+                        result.append(line);
+                    }
+
+                    String resultStr = result.toString();
+                    JSONObject obj = new JSONObject(resultStr);
+                    JSONArray arr =obj.getJSONArray("ids");
+
+
+                    for (int j = 0; j < arr.length(); j++) {
+                            JSONObject object = arr.getJSONObject(j);
+
+                            String name = object.getString("name");
+                            String description = "";
+                            int day = Integer.parseInt(object.getString("day"));
+                            int month = Integer.parseInt(object.getString("month"));
+                            int year = Integer.parseInt(object.getString("year"));
+
+                            createTaskFromCanvas(name, description, day, month, year);
+                    }
+
+                } catch (IOException e) {
+                    e.printStackTrace();
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                } finally {
+                    if (conn != null) {
+                        conn.disconnect();
+                    }
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+        }
+
+
+    }
+
     public static void getCanvasTokens() {
         enableStrictMode();
         HashMap<String, String> params = new HashMap<>();
@@ -248,8 +318,10 @@ public class SessionData {
                         JSONObject object = arr.getJSONObject(j);
                         String name = object.getString("name");
                         String token = object.getString("token");
-                        Log.d(name, token);
-                        Canvas canvas = new Canvas(name, token);
+                        String domain = object.getString("domain");
+                        String b = object.getString("beforeCreate");
+                        String a = object.getString("afterCreate");
+                        Canvas canvas = new Canvas(name, token, domain, b, a);
                         canvasTokens.add(canvas);
                     }
                 }
@@ -273,6 +345,73 @@ public class SessionData {
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
 
         StrictMode.setThreadPolicy(policy);
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
+    public static void createTaskFromCanvas(String name, String description, int day, int month, int year) {
+        enableStrictMode();
+        HashMap<String, String> params = new HashMap<>();
+        params.put("token", token);
+        params.put("taskName", name);
+        params.put("day", Integer.toString(day));
+        params.put("month", Integer.toString(month));
+        params.put("year", Integer.toString(year));
+        params.put("description", description);
+        StringBuilder sbParams = new StringBuilder();
+        int i = 0;
+        for (String key : params.keySet()) {
+            try {
+                if (i != 0){
+                    sbParams.append("&");
+                }
+                sbParams.append(key).append("=")
+                        .append(URLEncoder.encode(params.get(key), "UTF-8"));
+
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+            }
+            i++;
+        }
+        try{
+            String url = "http://www.srikantv.com/taskitAPI/newTask";
+            URL urlObj = new URL(url);
+            HttpURLConnection conn = (HttpURLConnection) urlObj.openConnection();
+
+            conn.setDoOutput(true);
+            conn.setRequestMethod("POST");
+            conn.setRequestProperty("Accept-Charset", "UTF-8");
+            conn.setReadTimeout(10000);
+            conn.setConnectTimeout(15000);
+            conn.connect();
+
+            String paramsString = sbParams.toString();
+
+            DataOutputStream wr = new DataOutputStream(conn.getOutputStream());
+            wr.writeBytes(paramsString);
+            wr.flush();
+            wr.close();
+
+            try {
+                InputStream in = new BufferedInputStream(conn.getInputStream());
+                BufferedReader reader = new BufferedReader(new InputStreamReader(in));
+                StringBuilder result = new StringBuilder();
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    result.append(line);
+                }
+
+                getTasks();
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            } finally {
+                if (conn != null) {
+                    conn.disconnect();
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
 }
