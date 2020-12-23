@@ -8,6 +8,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
@@ -16,6 +17,8 @@ import com.google.android.material.textfield.TextInputLayout;
 import com.srikant.taskit.R;
 import com.srikant.taskit.util.SessionData;
 
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.w3c.dom.Text;
 
 import java.io.BufferedInputStream;
@@ -73,6 +76,7 @@ public class CreateTask extends AppCompatActivity {
         params.put("month", Integer.toString(this.month));
         params.put("year", Integer.toString(this.year));
         params.put("description", description.getEditText().getText().toString());
+        params.put("type", "TaskIt Task");
         StringBuilder sbParams = new StringBuilder();
         int i = 0;
         for (String key : params.keySet()) {
@@ -116,9 +120,17 @@ public class CreateTask extends AppCompatActivity {
                     result.append(line);
                 }
 
+                JSONObject object = new JSONObject(result.toString());
+
+                if(object.getString("status").equals("2")) {
+                    Toast.makeText(getApplicationContext(), "This task already exists.", Toast.LENGTH_SHORT).show();
+                }
+
                 SessionData.getTasks();
 
             } catch (IOException e) {
+                e.printStackTrace();
+            } catch (JSONException e) {
                 e.printStackTrace();
             } finally {
                 if (conn != null) {

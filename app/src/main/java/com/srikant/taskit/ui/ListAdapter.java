@@ -38,9 +38,10 @@ public class ListAdapter extends ArrayAdapter<SessionData.Task> {
         if (p != null) {
             TextView taskName = (TextView) v.findViewById(R.id.taskName);
             TextView taskDescription = (TextView) v.findViewById(R.id.taskDescription);
+            TextView type = (TextView) v.findViewById(R.id.type);
 
                 taskName.setText(p.getTaskName());
-
+                type.setText(p.getType());
                 taskDescription.setText(p.getTaskDescription());
 
         }

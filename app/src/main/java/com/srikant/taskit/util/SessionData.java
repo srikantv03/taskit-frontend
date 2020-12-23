@@ -90,13 +90,15 @@ public class SessionData {
         int month;
         int year;
         String description;
+        String type;
 
-        public Task(String name, String description, int day, int month, int year) {
+        public Task(String name, String description, int day, int month, int year, String type) {
             this.name = name;
             this.day = day;
             this.month = month;
             this.year = year;
             this.description = description;
+            this.type = type;
         }
 
         public int getDay() {
@@ -114,6 +116,7 @@ public class SessionData {
         public String getTaskDescription() {
             return description;
         }
+        public String getType() {return type;}
 
     }
 
@@ -177,8 +180,8 @@ public class SessionData {
                     int month = Integer.parseInt(object.getString("month"));
                     int year = Integer.parseInt(object.getString("year"));
                     String description = object.getString("description");
-                    Task temp = new Task(taskName, description, day, month, year);
-                    Log.d("asdf", taskName);
+                    String type = object.getString("type");
+                    Task temp = new Task(taskName, description, day, month, year, type);
                     tasks.add(temp);
                 }
 
@@ -360,6 +363,7 @@ public class SessionData {
         params.put("month", Integer.toString(month - 1));
         params.put("year", Integer.toString(year));
         params.put("description", description);
+        params.put("type", "Canvas Task");
         StringBuilder sbParams = new StringBuilder();
         int i = 0;
         for (String key : params.keySet()) {
