@@ -7,8 +7,10 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.CalendarView;
 import android.widget.ListView;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -60,11 +62,18 @@ public class HomeFragment extends Fragment {
         int month = cal.get(Calendar.MONTH);
         int day = cal.get(Calendar.DAY_OF_MONTH);
 
-        SessionData.getTasks();
-        SessionData.fromCanvasToTask();
+
 
         ArrayList<SessionData.Task> viewTasks = SessionData.getForDMY(day, month, year);
         DueTodayAdapter adapter = new DueTodayAdapter(getContext(), 0, viewTasks);
+
+        Spinner spinner = (Spinner) root.findViewById(R.id.spinner);
+
+        ArrayAdapter<CharSequence> sequence = ArrayAdapter.createFromResource(getContext(),
+                R.array.home_array, android.R.layout.simple_spinner_item);
+                adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
+        spinner.setAdapter(sequence);
 
         listView.setAdapter(adapter);
 

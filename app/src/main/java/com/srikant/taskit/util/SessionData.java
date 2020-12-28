@@ -7,6 +7,8 @@ import android.util.Log;
 
 import androidx.annotation.RequiresApi;
 
+import com.google.api.services.classroom.model.Student;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -21,8 +23,14 @@ import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.TimeZone;
 
 public class SessionData {
     static String token;
@@ -56,6 +64,10 @@ public class SessionData {
             }
         }
         return returnList;
+    }
+
+    public static void sortTasks() {
+        Collections.sort(tasks, new SortByTime());
     }
 
     public static class Canvas {
@@ -117,7 +129,30 @@ public class SessionData {
             return description;
         }
         public String getType() {return type;}
+        public long getFullNum() throws ParseException {
+            String dateString = year + "-" + (month + 1) + "-" + day + " 00:00:00";
+            SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
+            df.setTimeZone(TimeZone.getTimeZone("UTC"));
+            Date date = df.parse(dateString);
+            long time = date.getTime();
+
+            return time;
+        }
+
+    }
+
+    static class SortByTime implements Comparator<Task>
+    {
+        public int compare(Task a, Task b)
+        {
+            try {
+                return (int) (a.getFullNum() - b.getFullNum());
+            } catch (ParseException e) {
+                e.printStackTrace();
+                return 0;
+            }
+        }
     }
 
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)

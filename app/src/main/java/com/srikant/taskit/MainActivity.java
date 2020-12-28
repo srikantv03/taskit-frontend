@@ -1,5 +1,6 @@
 package com.srikant.taskit;
 
+import android.os.Build;
 import android.os.Bundle;
 import android.os.StrictMode;
 import android.util.Log;
@@ -15,6 +16,7 @@ import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.textfield.TextInputLayout;
 import com.srikant.taskit.util.SessionData;
 
+import androidx.annotation.RequiresApi;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
@@ -54,6 +56,7 @@ public class MainActivity extends AppCompatActivity {
             final TextInputLayout username = findViewById(R.id.username);
             final TextInputLayout password = findViewById(R.id.password);
             login.setOnClickListener(new View.OnClickListener() {
+                @RequiresApi(api = Build.VERSION_CODES.KITKAT)
                 @Override
                 public void onClick(View view) {
                     if(!username.getEditText().getText().toString().equals("") && !password.getEditText().getText().toString().equals("")) {
@@ -65,6 +68,10 @@ public class MainActivity extends AppCompatActivity {
                                 if(obj.getString("status").equals("1")) {
                                     SessionData.setToken(obj.getString("Token"));
                                     SessionData.setName(obj.getString("First") + " " + obj.getString("Last"));
+                                    SessionData.getTasks();
+                                    SessionData.getCanvasTokens();
+                                    SessionData.fromCanvasToTask();
+                                    SessionData.sortTasks();
                                     changeView();
                                 }
                                 else {

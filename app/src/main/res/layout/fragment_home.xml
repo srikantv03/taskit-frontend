@@ -41,6 +41,7 @@
         app:layout_constraintVertical_bias="0.962" />
 
     <Spinner
+        android:background="@drawable/spinner_style"
         android:id="@+id/spinner"
         android:layout_width="409dp"
         android:layout_height="wrap_content"
