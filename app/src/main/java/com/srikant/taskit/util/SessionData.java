@@ -49,6 +49,19 @@ public class SessionData {
         return token;
     }
 
+    public static ArrayList<Task> getTasks(int day, int month, int year) {
+        ArrayList<Task> returnList = new ArrayList<>();
+        for(int i = 0; i < 10; i++) {
+            if(tasks.size() <= i) {
+                return returnList;
+            }
+            else {
+                returnList.add(tasks.get(i));
+            }
+        }
+        return returnList;
+    }
+
     public static ArrayList<Canvas> getAllCanvas() {
         return canvasTokens;
     }
@@ -129,6 +142,7 @@ public class SessionData {
             return description;
         }
         public String getType() {return type;}
+
         public long getFullNum() throws ParseException {
             String dateString = year + "-" + (month + 1) + "-" + day + " 00:00:00";
             SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
