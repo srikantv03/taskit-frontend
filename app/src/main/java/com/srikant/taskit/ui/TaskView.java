@@ -13,7 +13,9 @@ import android.widget.ListView;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.srikant.taskit.R;
+import com.srikant.taskit.ui.home.HomeFragment;
 import com.srikant.taskit.util.SessionData;
 
 import java.io.BufferedInputStream;
@@ -43,6 +45,7 @@ public class TaskView extends AppCompatActivity {
         SessionData.getTasks();
 
         // Construct the data source
+        FloatingActionButton back = findViewById(R.id.back);
 
         Button addTask = findViewById(R.id.addTask);
 
@@ -65,6 +68,13 @@ public class TaskView extends AppCompatActivity {
             }
         });
 
+        back.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                goBack();
+            }
+        });
+
     }
 
     public void changeActivity(int day, int month, int year) {
@@ -72,6 +82,11 @@ public class TaskView extends AppCompatActivity {
         intent.putExtra("day", day);
         intent.putExtra("month", month);
         intent.putExtra("year", year);
+        startActivity(intent);
+    }
+
+    public void goBack() {
+        Intent intent = new Intent(this, HomeFragment.class);
         startActivity(intent);
     }
 

@@ -1,6 +1,7 @@
 package com.srikant.taskit.ui;
 
 import android.app.AppComponentFactory;
+import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.StrictMode;
@@ -13,6 +14,7 @@ import android.widget.Toast;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.textfield.TextInputLayout;
 import com.srikant.taskit.R;
 import com.srikant.taskit.util.SessionData;
@@ -45,7 +47,7 @@ public class CreateTask extends AppCompatActivity {
     public void onCreate(Bundle savedInstance) {
         super.onCreate(savedInstance);
         setContentView(R.layout.create_task);
-
+        FloatingActionButton back = findViewById(R.id.back);
         Button createTask = findViewById(R.id.submit);
         Button changeDate = findViewById(R.id.pickDate);
         TextView date = findViewById(R.id.date);
@@ -57,11 +59,20 @@ public class CreateTask extends AppCompatActivity {
         month = extras.getInt("month");
         year = extras.getInt("year");
 
+
+
         createTask.setOnClickListener(new View.OnClickListener() {
             @RequiresApi(api = Build.VERSION_CODES.KITKAT)
             @Override
             public void onClick(View view) {
                 createTask();
+            }
+        });
+
+        back.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                goBack(day, month, year);
             }
         });
     }
@@ -148,4 +159,13 @@ public class CreateTask extends AppCompatActivity {
 
         StrictMode.setThreadPolicy(policy);
     }
+
+    public void goBack(int day, int month, int year) {
+        Intent intent = new Intent(this, TaskView.class);
+        intent.putExtra("day", day);
+        intent.putExtra("month", month);
+        intent.putExtra("year", year);
+        startActivity(intent);
+    }
+
 }

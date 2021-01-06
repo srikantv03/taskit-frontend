@@ -31,6 +31,11 @@
             android:screenOrientation="portrait">
         </activity>
         <activity
+            android:name=".ui.home.HomeFragment"
+            android:configChanges="orientation"
+            android:screenOrientation="portrait">
+        </activity>
+        <activity
             android:name=".ui.CreateTask"
             android:configChanges="orientation"
             android:screenOrientation="portrait">
