@@ -9,11 +9,13 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.srikant.taskit.MainActivity;
 import com.srikant.taskit.R;
 import com.srikant.taskit.ui.home.HomeFragment;
 import com.srikant.taskit.util.SessionData;
@@ -50,6 +52,7 @@ public class TaskView extends AppCompatActivity {
         Button addTask = findViewById(R.id.addTask);
 
         Bundle extras = getIntent().getExtras();
+        TextView title = findViewById(R.id.title);
         day = extras.getInt("day");
         month = extras.getInt("month");
         year = extras.getInt("year");
@@ -60,6 +63,9 @@ public class TaskView extends AppCompatActivity {
 
         ListView listView = (ListView) findViewById(R.id.listView);
         listView.setAdapter(adapter);
+
+        title.setText("TASKS FOR " + (month + 1) + "/" + day + "/" + year);
+
 
         addTask.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -86,7 +92,7 @@ public class TaskView extends AppCompatActivity {
     }
 
     public void goBack() {
-        Intent intent = new Intent(this, HomeFragment.class);
+        Intent intent = new Intent(this, MainActivity.class);
         startActivity(intent);
     }
 

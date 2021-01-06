@@ -33,6 +33,7 @@ import java.util.HashMap;
 import java.util.TimeZone;
 
 public class SessionData {
+    static boolean logged = false;
     static String token;
     static String name;
     static ArrayList<Task> tasks;
@@ -47,6 +48,14 @@ public class SessionData {
 
     public static String getToken() {
         return token;
+    }
+
+    public static boolean getLogged() {
+        return logged;
+    }
+
+    public static void setLogged(boolean tf) {
+        logged = tf;
     }
 
     public static ArrayList<Task> getTasks(int day, int month, int year) {

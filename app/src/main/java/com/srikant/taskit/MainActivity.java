@@ -50,7 +50,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        if(!logged ) {
+        if(!logged && !SessionData.getLogged()) {
             setContentView(R.layout.login_page);
             Button login = findViewById(R.id.login);
             final TextInputLayout username = findViewById(R.id.username);
@@ -72,6 +72,7 @@ public class MainActivity extends AppCompatActivity {
                                     SessionData.getCanvasTokens();
                                     SessionData.fromCanvasToTask();
                                     SessionData.sortTasks();
+                                    SessionData.setLogged(true);
                                     changeView();
                                 }
                                 else {
