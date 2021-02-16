@@ -1,4 +1,4 @@
-# Taskit Frontend
+# Task-it Frontend
 
 This application is a modular android task management applications that has API support for both Canvas LMS and Google Classroom (work in progress). TaskIt uses web-based functionality such as SQL databases, RESTful APIs and server-side scripting to make its features possible.
 
